@@ -1,0 +1,23 @@
+--total sales
+select sum(sales) from public.orders o 
+
+-- total profit
+select sum(profit) from public.orders o 
+
+--profit ratio
+select sum(profit)/sum(sales) from public.orders o 
+
+--unique orders
+select distinct(order_id) as ids from public.orders o 
+
+--numbder of unique orders
+select count(distinct(order_id)) from public.orders o 
+
+--profit per order
+select sum(profit)/count(distinct(order_id)) as ppo from public.orders o 
+
+--sales per customer
+select round(sum(sales)/count(distinct customer_id),2) as spc from public.orders o 
+
+-- avg discount
+select round(avg(discount), 2) as avg_discount from public.orders o 
