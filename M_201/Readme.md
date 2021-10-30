@@ -16,5 +16,5 @@ There are three models of Superstore data base.
 ![logical_model](/M_201/superstore_logical.png )
 
 3.Physical  
-![physical_model](https://github.com/andreikrutov/Data_Learn/blob/main/M_201/superstore_physical.png)
+![physical_model_2.0](https://github.com/andreikrutov/Data_Learn/blob/main/M_201/superstore_physical.png)
 
