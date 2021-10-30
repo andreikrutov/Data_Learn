@@ -1,0 +1,11 @@
+CREATE TABLE geography_dim
+(
+ geography_id  serial NOT NULL,
+ country       varchar(30) NOT NULL,
+ city          varchar(30) NOT NULL,
+ state_country varchar(30) NOT NULL,
+ postal_code   varchar(30) NOT NULL,
+ region        varchar(30) NOT NULL,
+ col_36        varchar(30) NOT NULL,
+ CONSTRAINT PK_38 PRIMARY KEY ( geography_id )
+);

@@ -1,0 +1,9 @@
+CREATE TABLE product_dim
+(
+ product_id     serial NOT NULL,
+ product_number varchar(20) NOT NULL,
+ category       varchar(20) NOT NULL,
+ sub_category   varchar(20) NOT NULL,
+ product_name   varchar(200) NOT NULL,
+ CONSTRAINT PK_51 PRIMARY KEY ( product_id )
+);

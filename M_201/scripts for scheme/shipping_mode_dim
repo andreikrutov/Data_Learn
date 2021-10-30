@@ -1,0 +1,6 @@
+CREATE TABLE shipping_mode_dim
+(
+ shipping_mode_id serial NOT NULL,
+ mode             varchar(20) NOT NULL,
+ CONSTRAINT PK_42 PRIMARY KEY ( shipping_mode_id )
+);

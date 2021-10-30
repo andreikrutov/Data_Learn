@@ -1,0 +1,6 @@
+CREATE TABLE order_date_dim
+(
+ date_id    serial NOT NULL,
+ order_date date NOT NULL,
+ CONSTRAINT PK_5 PRIMARY KEY ( date_id )
+);

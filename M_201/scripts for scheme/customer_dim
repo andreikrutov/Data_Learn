@@ -1,0 +1,8 @@
+CREATE TABLE customer_dim
+(
+ customer_id     serial NOT NULL,
+ name            varchar(50) NOT NULL,
+ segment         varchar(20) NOT NULL,
+ customer_number varchar(20) NOT NULL,
+ CONSTRAINT PK_58 PRIMARY KEY ( customer_id )
+);
