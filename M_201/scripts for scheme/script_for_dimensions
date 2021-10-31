@@ -1,0 +1,33 @@
+--Заполняем таблицу shipping_mode_dim данными из orders
+--truncate shipping_mode_dim cascade
+insert into shipping_mode_dim 
+select 100+row_number() over(), ship_mode from (select distinct ship_mode from orders) a
+
+--Заполняем таблицу customer_dim данными из orders
+insert into customer_dim 
+select 100+row_number() over(), customer_name, segment, customer_id
+from (select customer_name, segment, customer_id from orders) a
+
+--Заполняем таблицу geography_dim данными из orders
+insert into geography_dim 
+select 100+row_number() over(), country, city, state, postal_code, region
+from (select country, city, state, postal_code, region from orders) a
+
+--Заполняем таблицу order_date_dim данными из orders
+insert into order_date_dim
+select 100+row_number() over(), order_date
+from (select order_date from orders) a
+
+--Заполняем таблицу product_dim данными из orders
+insert into product_dim
+select 100+row_number() over(), product_id, category, subcategory, product_name
+from (select product_id, category, subcategory, product_name from orders) a
+
+--Заполняем таблицу shipping_date_dim данными из orders
+insert into shipping_date_dim
+select 100+row_number() over(), ship_date
+from (select ship_date from orders) a
+
+
+
+
