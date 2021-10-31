@@ -1,3 +1,4 @@
+drop table if exists shipping_mode_dim cascade;
 CREATE TABLE shipping_mode_dim
 (
  shipping_mode_id serial NOT NULL,

@@ -1,3 +1,4 @@
+drop table if exists product_dim cascade;
 CREATE TABLE product_dim
 (
  product_id     serial NOT NULL,

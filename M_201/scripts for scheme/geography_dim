@@ -1,3 +1,4 @@
+drop table if exists geography_dim cascade;
 CREATE TABLE geography_dim
 (
  geography_id  serial NOT NULL,

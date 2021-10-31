@@ -1,6 +1,0 @@
-CREATE TABLE shipping_date_dim
-(
- shipping_date_id serial NOT NULL,
- shipping_date    date NOT NULL,
- CONSTRAINT PK_62 PRIMARY KEY ( shipping_date_id )
-);
