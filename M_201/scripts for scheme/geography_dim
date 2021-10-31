@@ -6,6 +6,5 @@ CREATE TABLE geography_dim
  state_country varchar(30) NOT NULL,
  postal_code   varchar(30) NOT NULL,
  region        varchar(30) NOT NULL,
- col_36        varchar(30) NOT NULL,
  CONSTRAINT PK_38 PRIMARY KEY ( geography_id )
 );
