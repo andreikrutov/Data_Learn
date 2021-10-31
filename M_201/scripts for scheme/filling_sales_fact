@@ -1,0 +1,36 @@
+--Изменение типа стобца postal_code в таблицу orders на varchar
+ALTER TABLE orders ALTER COLUMN postal_code TYPE varchar(30);
+--Добавление ключей в таблицу orders
+truncate table sales_fact cascade;
+insert into sales_fact (geography_id, 
+			shipping_mode_id, product_id, 
+			customer_id, order_number, sale, profit, discount, quantity, order_date,
+			shipping_date)
+select 
+	g.geography_id,
+	sm.shipping_mode_id,
+	p.product_id,
+	c.customer_id,
+	o.order_id,
+	o.sales,
+	o.profit,
+	o.discount,
+	o.quantity, 
+	o.order_date,
+	o.ship_date 
+from orders o
+	inner join shipping_mode_dim sm
+		on o.ship_mode=sm.mode
+	inner join product_dim p
+		on o.product_id=p.product_number and o.category=p.category and o.subcategory=p.sub_category 
+		and o.product_name=p.product_name 
+	inner join geography_dim g
+		on o.country=g.country and o.city=g.city and o.postal_code=g.postal_code 
+		and o.state=g.state_country and o.region=g.region 
+	inner join customer_dim c
+		on c.customer_number=o.customer_id and c.name=o.customer_name 
+		and c.segment=o.segment 
+
+--проверка, что ничего не потеряно
+select count(*) from sales_fact sf 
+--количество строк =9994, значит все верно

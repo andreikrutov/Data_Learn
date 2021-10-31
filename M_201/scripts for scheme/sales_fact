@@ -13,29 +13,4 @@ CREATE TABLE sales_fact
  quantity         smallint NOT NULL,
  order_date       date NOT NULL,
  shipping_date    date NOT NULL,
- CONSTRAINT PK_74 PRIMARY KEY ( sale_id ),
- CONSTRAINT FK_26 FOREIGN KEY ( geography_id ) REFERENCES geography_dim ( geography_id ),
- CONSTRAINT FK_27 FOREIGN KEY ( shipping_mode_id ) REFERENCES shipping_mode_dim ( shipping_mode_id ),
- CONSTRAINT FK_30 FOREIGN KEY ( product_id ) REFERENCES product_dim ( product_id ),
- CONSTRAINT FK_24 FOREIGN KEY ( customer_id ) REFERENCES customer_dim ( customer_id )
-);
-
-CREATE INDEX fkIdx_39 ON sales_fact
-(
- geography_id
-);
-
-CREATE INDEX fkIdx_43 ON sales_fact
-(
- shipping_mode_id
-);
-
-CREATE INDEX fkIdx_52 ON sales_fact
-(
- product_id
-);
-
-CREATE INDEX fkIdx_59 ON sales_fact
-(
- customer_id
-);
+ CONSTRAINT PK_74 PRIMARY KEY ( sale_id )) ;

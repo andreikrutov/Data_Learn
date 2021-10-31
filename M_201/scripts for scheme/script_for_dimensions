@@ -1,21 +1,37 @@
+--«аполн€ем таблицу shipping_mode_dim данными из orders
+--truncate shipping_mode_dim cascade
 insert into shipping_mode_dim 
 select 100+row_number() over(), ship_mode from (select distinct ship_mode from orders) a
 
-truncate table customer_dim cascade;
+--«аполн€ем таблицу customer_dim данными из orders
 insert into customer_dim 
 select 100+row_number() over(), customer_name, segment, customer_id
 from (select customer_name, segment, customer_id from orders) a
-group by customer_name, segment, customer_id 
-/*group by аналогично использованию distinct в запросе*/
+group by customer_name, segment, customer_id
+/*group by действует аналогично distinct*/
 
-truncate table geography_dim cascade;
+--«аполн€ем таблицу geography_dim данными из orders
 insert into geography_dim 
 select 100+row_number() over(), country, city, state, postal_code, region
 from (select country, city, state, postal_code, region from orders) a
 group by country, city, state, postal_code, region
 
-truncate table product_dim cascade;
+--«аполн€ем пропущенное значение
+update geography_dim
+set postal_code = '05401'
+where city = 'Burlington'  and postal_code is null;
+
+update orders
+set postal_code = '05401'
+where city = 'Burlington'  and postal_code is null; 
+
+
+--«аполн€ем таблицу product_dim данными из orders
 insert into product_dim
 select 100+row_number() over(), product_id, category, subcategory, product_name
 from (select product_id, category, subcategory, product_name from orders) a
 group by product_id, category, subcategory, product_name
+
+
+
+
