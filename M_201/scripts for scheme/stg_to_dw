@@ -1,0 +1,173 @@
+-- create schema
+-- create dim tables (shipping, customer, product, geography)
+-- fix data quality problem
+-- create sales_fact table
+-- match number of rows between staging and dw (business layer)
+create schema dw;
+
+--SHIPPING
+--creating a table
+drop table if exists dw.shipping_mode_dim cascade;
+CREATE TABLE dw.shipping_mode_dim
+(
+ shipping_mode_id serial NOT NULL,
+ mode             varchar(20) NOT NULL,
+ CONSTRAINT PK_42 PRIMARY KEY ( shipping_mode_id )
+);
+--deleting rows
+truncate table dw.shipping_mode_dim;
+
+--generating ship_id and inserting ship_mode from orders
+insert into dw.shipping_mode_dim 
+select 100+row_number() over(), ship_mode from (select distinct ship_mode from stg.orders ) a;
+--checking
+select * from dw.shipping_mode_dim sd; 
+
+
+
+
+--CUSTOMER
+
+drop table if exists dw.customer_dim cascade;
+CREATE TABLE dw.customer_dim
+(
+ customer_id     serial NOT NULL,
+ name            varchar(50) NOT NULL,
+ segment         varchar(20) NOT NULL,
+ customer_number varchar(20) NOT NULL,
+ CONSTRAINT PK_58 PRIMARY KEY ( customer_id )
+);
+--deleting rows
+truncate table dw.customer_dim;
+--inserting
+insert into dw.customer_dim 
+select 100+row_number() over(), customer_name, segment, customer_id from (select distinct customer_name, segment, customer_id from stg.orders ) a;
+--checking
+select * from dw.customer_dim cd;  
+
+
+
+
+--geography
+
+drop table if exists dw.geography_dim cascade;
+CREATE TABLE dw.geography_dim
+(
+ geography_id  serial NOT NULL,
+ country       varchar(30) NOT NULL,
+ city          varchar(30) NOT NULL,
+ state_country varchar(30) NOT NULL,
+ postal_code   varchar(30) NULL,
+ region        varchar(30) NOT NULL,
+ CONSTRAINT PK_38 PRIMARY KEY ( geography_id )
+);
+--deleting rows
+truncate table dw.geography_dim;
+--generating geography_id and inserting rows from orders
+insert into dw.geography_dim 
+select 100+row_number() over(), country, city, state, postal_code, region 
+from (select distinct country, city, state, postal_code, region from stg.orders ) a;
+--data quality check
+select distinct country, city, state_country, postal_code, region from dw.geography_dim
+where country is null or city is null or postal_code is null;
+
+-- City Burlington, Vermont doesn't have postal code
+update dw.geography_dim
+set postal_code = '05401'
+where city = 'Burlington'  and postal_code is null;
+
+--also update source file
+update stg.orders
+set postal_code = '05401'
+where city = 'Burlington'  and postal_code is null;
+
+
+--PRODUCT
+
+--creating a table
+drop table if exists dw.product_dim cascade;
+CREATE TABLE dw.product_dim
+(
+ product_id     serial NOT NULL,
+ product_number varchar(20) NOT NULL,
+ category       varchar(20) NOT NULL,
+ sub_category   varchar(20) NOT NULL,
+ product_name   varchar(200) NOT NULL,
+ CONSTRAINT PK_51 PRIMARY KEY ( product_id )
+);
+--deleting rows
+truncate table dw.product_dim;
+--
+insert into dw.product_dim 
+select 100+row_number() over (), product_id, category, subcategory, product_name 
+from (select distinct product_id, product_name, category, subcategory from stg.orders ) a;
+--checking
+select * from dw.product_dim cd; 
+
+
+
+--METRICS
+
+--creating a table
+drop table if exists dw.sales_fact cascade;
+CREATE TABLE dw.sales_fact
+(
+ sale_id          serial NOT NULL,
+ geography_id     serial NOT NULL,
+ shipping_mode_id serial NOT NULL,
+ product_id       serial NOT NULL,
+ customer_id      serial NOT NULL,
+ order_number     varchar(20) NOT NULL,
+ sale             decimal NOT NULL,
+ profit           decimal NOT NULL,
+ discount         decimal NOT NULL,
+ quantity         smallint NOT NULL,
+ order_date       date NOT NULL,
+ shipping_date    date NOT NULL,
+ CONSTRAINT PK_74 PRIMARY KEY ( sale_id )) ;
+
+truncate table dw.sales_fact cascade;
+insert into dw.sales_fact (geography_id, 
+			shipping_mode_id, product_id, 
+			customer_id, order_number, sale, profit, discount, quantity, order_date,
+			shipping_date)
+select 
+	g.geography_id,
+	sm.shipping_mode_id,
+	p.product_id,
+	c.customer_id,
+	o.order_id,
+	o.sales,
+	o.profit,
+	o.discount,
+	o.quantity, 
+	o.order_date,
+	o.ship_date 
+from stg.orders o
+	inner join dw.shipping_mode_dim sm
+		on o.ship_mode=sm.mode
+	inner join dw.product_dim p
+		on o.product_id=p.product_number and o.category=p.category and o.subcategory=p.sub_category 
+		and o.product_name=p.product_name 
+	inner join dw.geography_dim g
+		on o.country=g.country and o.city=g.city and o.postal_code=g.postal_code 
+		and o.state=g.state_country and o.region=g.region 
+	inner join dw.customer_dim c
+		on c.customer_number=o.customer_id and c.name=o.customer_name 
+		and c.segment=o.segment 
+
+--проверка, что ничего не потеряно
+select count(*) from dw.sales_fact sf 
+--количество строк =9994, значит все верно
+
+
+
+
+
+
+
+
+
+
+
+
