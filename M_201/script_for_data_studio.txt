@@ -1,0 +1,7 @@
+--script fot the whole table in data studio
+
+select * from dw.sales_fact sf
+inner join dw.customer_dim cd on cd.customer_id=sf.customer_id
+inner join dw.shipping_mode_dim sm on sm.shipping_mode_id=sf.shipping_mode_id
+inner join dw.product_dim p on p.product_id=sf.product_id
+inner join dw.geography_dim g on g.geography_id=sf.geography_id
